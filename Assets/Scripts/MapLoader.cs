@@ -99,7 +99,7 @@ public class MapLoader : MonoBehaviour
             num += 1;
         }
 
-        CameraController.i.Move(0f, 0f);
+        CameraController.i.Move(new Vector3(0f, 0f, 0f));
 
         print("Map is succesfully built!");
     }

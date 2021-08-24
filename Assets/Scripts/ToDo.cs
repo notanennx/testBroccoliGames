@@ -15,6 +15,6 @@ public class ToDo : MonoBehaviour
         5) Зуминг
         6) ХардДжейсон, работающий с разрывами
 
-        1h 49min
+        2h 52min
     */
 }
