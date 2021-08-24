@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class MapLoader : MonoBehaviour
 {
-
     // Tile Data
     [System.Serializable]
     public class Tile
@@ -66,12 +65,14 @@ public class MapLoader : MonoBehaviour
     }
 
     // Build
-    public Vector3 minPos;
-    public Vector3 maxPos;
+    [HideInInspector] public Vector3 minPos;
+    [HideInInspector] public Vector3 maxPos;
     public void Build(TileList tileList)
     {
+        // Get
         GameObject mapHolder = GameObject.Find("Map Holder");
 
+        // Build map
         int num = 0;
         foreach (var tile in tileList.List)
         {
@@ -87,7 +88,7 @@ public class MapLoader : MonoBehaviour
                 rectTransform.sizeDelta = new Vector2(tile.Width, tile.Height);
                 rectTransform.localPosition = new Vector3(tile.X + tile.Width, tile.Y + tile.Height, 0f);
 
-                // Set Image
+                // SetImage
                 Image tileImage = newTile.GetComponent<Image>();
                     tileImage.sprite = Resources.Load<Sprite>("Maps/"+mapName+"/"+tile.Id);
 
@@ -99,36 +100,7 @@ public class MapLoader : MonoBehaviour
             num += 1;
         }
 
+        // Move our camera
         CameraController.i.Move(new Vector3(0f, 0f, 0f));
-
-        print("Map is succesfully built!");
     }
-
-    /*
-    // Build
-    public void Build(TileList tileList)
-    {
-        GameObject mapHolder = GameObject.Find("Map");
-        foreach (var tile in tileList.List)
-        {
-            // Get
-            GameObject mapTile = Resources.Load<GameObject>("Prefabs/Map Tile");
-
-            // Create
-            GameObject newTile = Instantiate(mapTile);
-
-                // SetPos
-                newTile.transform.SetParent(mapHolder.transform, false);
-                //newTile.transform.sizeDelta = new Vector2(tile.Width, tile.Height);
-                //newTile.transform.localScale = new Vector3(tile.Width, tile.Height, 1f);
-                newTile.transform.localPosition = new Vector3(tile.X + tile.Width, tile.Y + tile.Height, 0f);
-
-                // Set Image
-                SpriteRenderer tileSprite = newTile.GetComponent<SpriteRenderer>();
-                    tileSprite.sprite = Resources.Load<Sprite>("Maps/"+mapName+"/"+tile.Id);
-        }
-
-        print("Map is succesfully built!");
-    }
-    */
 }

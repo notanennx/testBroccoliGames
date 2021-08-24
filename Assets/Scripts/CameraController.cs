@@ -14,29 +14,27 @@ public class CameraController : MonoBehaviour
     }
 
     // Move
-    private float orthSize;
-    private float aspectSize;
+    private float camOrthSize;
+    private float camAspectSize;
+    [HideInInspector] public bool camActive = true;
     public void Move(Vector3 newPos)
     {
         // Get
-        orthSize = Camera.main.orthographicSize;
-        aspectSize = Camera.main.aspect;
+        camOrthSize = Camera.main.orthographicSize;
+        camAspectSize = Camera.main.aspect;
 
-        // Reposition
-        /*
-        transform.position = new Vector3(
-            Mathf.Clamp(newPos.x, MapLoader.i.minPos.x+(aspectSize*orthSize), MapLoader.i.maxPos.x-(aspectSize*orthSize)),
-            Mathf.Clamp(newPos.y, MapLoader.i.maxPos.y+orthSize, MapLoader.i.minPos.y-orthSize),
-            0
-        );
-        */
+        // Pos
+        float xLerp = Mathf.Lerp(transform.position.x, newPos.x, 4f * Time.deltaTime);
+        float yLerp = Mathf.Lerp(transform.position.y, newPos.y, 4f * Time.deltaTime);
+
+        // Return
+        if (!camActive) return;
 
         // Reposition
         transform.position = new Vector3(
-            Mathf.Clamp(Mathf.Lerp(transform.position.x, newPos.x, 4f * Time.deltaTime), MapLoader.i.minPos.x+(aspectSize*orthSize), MapLoader.i.maxPos.x-(aspectSize*orthSize)),
-            Mathf.Clamp(Mathf.Lerp(transform.position.y, newPos.y, 4f * Time.deltaTime), MapLoader.i.maxPos.y+orthSize, MapLoader.i.minPos.y-orthSize),
-            0
-        );
+            Mathf.Clamp(xLerp, MapLoader.i.minPos.x+(camAspectSize*camOrthSize), MapLoader.i.maxPos.x-(camAspectSize*camOrthSize)),
+            Mathf.Clamp(yLerp, MapLoader.i.maxPos.y+camOrthSize, MapLoader.i.minPos.y-camOrthSize),
+            0);
     }
 
     // Late Update
@@ -45,6 +43,9 @@ public class CameraController : MonoBehaviour
     private Vector3 camDifference;
     void LateUpdate()
     {
+        // Return
+        if (!camActive) return;
+
         // Input
         if (Input.GetMouseButton(0))
         {
@@ -62,7 +63,11 @@ public class CameraController : MonoBehaviour
 
         // Moving
         Move((camOrigin - camDifference));
-        // Moving
-        //if (camDragging) Move((camOrigin - camDifference));
+    }
+
+    // Enables/disables for UnityEvents
+    public void Enable(bool enabled)
+    {
+        camActive = enabled;
     }
 }
