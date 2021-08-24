@@ -66,9 +66,13 @@ public class MapLoader : MonoBehaviour
     }
 
     // Build
+    public Vector3 minPos;
+    public Vector3 maxPos;
     public void Build(TileList tileList)
     {
         GameObject mapHolder = GameObject.Find("Map Holder");
+
+        int num = 0;
         foreach (var tile in tileList.List)
         {
             // Get
@@ -86,7 +90,16 @@ public class MapLoader : MonoBehaviour
                 // Set Image
                 Image tileImage = newTile.GetComponent<Image>();
                     tileImage.sprite = Resources.Load<Sprite>("Maps/"+mapName+"/"+tile.Id);
+
+            // Get out cam boundries
+            if (num == 0) minPos = rectTransform.localPosition + new Vector3(-0.5f * tile.Width, 0.5f * tile.Height, 1.0f);
+            if (num == (tileList.List.Length -1)) maxPos = rectTransform.localPosition + new Vector3(0.5f * tile.Width, -0.5f * tile.Height, 1.0f);
+
+            // Increasing our number
+            num += 1;
         }
+
+        CameraController.i.Move(0f, 0f);
 
         print("Map is succesfully built!");
     }
