@@ -52,14 +52,10 @@ public class MapLoader : MonoBehaviour
         {
             tileList = JsonUtility.FromJson<TileList>(jsonFile.text);
 
-            print("Loaded "+name+" map!");
-
             return tileList;
         }
         else
         {
-            print("Couldn't find "+name+" map!");
-
             return null;
         }
     }

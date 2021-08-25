@@ -13,6 +13,13 @@ public class CameraController : MonoBehaviour
         i = this;
     }
 
+    // Start
+    private float targetZoom;
+    void Start()
+    {
+        targetZoom = Camera.main.orthographicSize;
+    }
+
     // Move
     private float camOrthSize;
     private float camAspectSize;
@@ -31,10 +38,33 @@ public class CameraController : MonoBehaviour
         float yLerp = Mathf.Lerp(transform.position.y, newPos.y, 4f * Time.deltaTime);
 
         // Reposition
+        Reposition(new Vector3(xLerp, yLerp, 0f));
+    }
+
+    // Zoom
+    private float zoomSpeed = 2f;
+    private float zoomSmooth = 2f;
+    public void Zoom()
+    {
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0.0f) {
+            targetZoom -= scroll * zoomSpeed;
+            targetZoom = Mathf.Clamp(targetZoom, 1f, 4f);
+        }
+
+        // Resize
+        Camera.main.orthographicSize = Mathf.MoveTowards(Camera.main.orthographicSize, targetZoom, zoomSmooth * Time.deltaTime);
+        Reposition(transform.position);
+    }
+
+    // Reposition
+    void Reposition(Vector3 newPos)
+    {
+        // Repositions and clamps view
         transform.position = new Vector3(
-            Mathf.Clamp(xLerp, MapLoader.i.minPos.x+(camAspectSize*camOrthSize), MapLoader.i.maxPos.x-(camAspectSize*camOrthSize)),
-            Mathf.Clamp(yLerp, MapLoader.i.maxPos.y+camOrthSize, MapLoader.i.minPos.y-camOrthSize),
-            0);
+            Mathf.Clamp(newPos.x, MapLoader.i.minPos.x+(camAspectSize*camOrthSize), MapLoader.i.maxPos.x-(camAspectSize*camOrthSize)),
+            Mathf.Clamp(newPos.y, MapLoader.i.maxPos.y+camOrthSize, MapLoader.i.minPos.y-camOrthSize),
+            newPos.z);
     }
 
     // Late Update
@@ -62,6 +92,7 @@ public class CameraController : MonoBehaviour
         }
 
         // Moving
+        Zoom();
         Move((camOrigin - camDifference));
     }
 
