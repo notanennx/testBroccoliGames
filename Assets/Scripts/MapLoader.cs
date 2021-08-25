@@ -44,7 +44,7 @@ public class MapLoader : MonoBehaviour
     }
 
     // Load
-    public string mapName = "jungleCastle";
+    public string mapName = "jungleCastle"; // Can be customized to load different maps
     public TileList Load(string name)
     {
         var jsonFile = Resources.Load<TextAsset>("Maps/"+name+"/testing_views_settings_normal_level");

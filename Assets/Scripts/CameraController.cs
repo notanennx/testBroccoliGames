@@ -23,12 +23,12 @@ public class CameraController : MonoBehaviour
         camOrthSize = Camera.main.orthographicSize;
         camAspectSize = Camera.main.aspect;
 
-        // Pos
-        float xLerp = Mathf.Lerp(transform.position.x, newPos.x, 4f * Time.deltaTime);
-        float yLerp = Mathf.Lerp(transform.position.y, newPos.y, 4f * Time.deltaTime);
-
         // Return
         if (!camActive) return;
+
+        // Position
+        float xLerp = Mathf.Lerp(transform.position.x, newPos.x, 4f * Time.deltaTime);
+        float yLerp = Mathf.Lerp(transform.position.y, newPos.y, 4f * Time.deltaTime);
 
         // Reposition
         transform.position = new Vector3(
@@ -65,9 +65,48 @@ public class CameraController : MonoBehaviour
         Move((camOrigin - camDifference));
     }
 
+    // Pinpoint image
+    public Vector3 pinpointPos; // Can be customized from inspector for different points.
+    public string PinPoint(Vector3 targetPos)
+    {
+        // Calculate
+        Vector3 camPos = transform.position;
+        float camWidth = (Camera.main.orthographicSize) * Camera.main.aspect;
+        float camHeight = Camera.main.orthographicSize;
+
+        // No need for ScreenToWorldPoint
+        Vector3 worldPos = camPos + new Vector3((targetPos.x * camWidth), (targetPos.y * camHeight), 0f);
+
+        // Picked
+        GameObject closeObject = GetClosestObject(worldPos, GameObject.FindGameObjectsWithTag("Tile"));
+
+        // Returning
+        string objectName = closeObject.GetComponent<Image>().sprite.name;
+        return objectName;
+    }
+
+    // Finds nearest object to pos
+    GameObject GetClosestObject(Vector3 pos, GameObject[] objects)
+    {
+        GameObject bestPick = null;
+        float minDistance = Mathf.Infinity;
+        foreach (GameObject obj in objects)
+        {
+            float distance = Vector3.Distance(obj.transform.position, pos);
+            if (distance < minDistance)
+            {
+                bestPick = obj;
+                minDistance = distance;
+            }
+        }
+        return bestPick;
+    }
+
     // Enables/disables for UnityEvents
     public void Enable(bool enabled)
     {
         camActive = enabled;
+
+        PinPoint(pinpointPos);
     }
 }
